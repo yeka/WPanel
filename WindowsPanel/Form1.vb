@@ -4,6 +4,16 @@ Imports System.Text.RegularExpressions
 
 Public Class Form1
     Protected runner As New Yeka.WPanel.Runner
+    Dim config As Yeka.WPanel.SimpleConfig
+
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+
+        ' Add any initialization after the InitializeComponent() call.
+        config = New Yeka.WPanel.SimpleConfig("D:\watch.ini")
+    End Sub
 
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
         FileSystemWatcher1.EnableRaisingEvents = False
@@ -25,8 +35,9 @@ Public Class Form1
         Timer1.Enabled = True
 
         Dim path As String = e.FullPath.Replace("\", "/")
-
         TextBox2.Text = TimeOfDay.ToString & vbCrLf
+        Application.DoEvents()
+
         If e.ChangeType = IO.WatcherChangeTypes.Changed Then
             TextBox2.Text &= "File " & path & " has been modified" & vbCrLf
             CheckForRunner(path)
@@ -60,33 +71,24 @@ Public Class Form1
         NotifyIcon1.ShowBalloonTip(200)
     End Sub
 
-    Private Sub Button4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button4.Click
-        Dim match = System.Text.RegularExpressions.Regex.Match("Something/That/.php", "That/(.*?)\.php$")
-        MsgBox(match.Success)
-        MsgBox(match.Groups(1).Value)
-    End Sub
-
+  
     Public Sub CheckForRunner(ByVal path As String)
-        Dim cmd = "phpunit.bat"
-        Dim basedir = "D:/works/git/sf2-poc/"
-        Dim cmd_args = "-c tests {file}"
-        Dim search = "vendor/propertyguru/event/src/Guru/EventBundle/(?!Tests/)(.*)\.php"
-        Dim test = "vendor/propertyguru/event/src/Guru/EventBundle/Tests/"
+        For Each I In config.Config
+            Dim basedir As String = I("basedir")
+            Dim watch As String = I("watch")
+            Dim cmd As String = I("command")
+            Dim args As String = I("arguments")
 
-        Dim match = Regex.Match(path, search)
-        If (match.Success) Then
-            Dim args = cmd_args.Replace("{file}", test & match.Groups(1).Value & "Test.php")
-            Dim result = runner.Run(cmd, args, basedir.Replace("/", "\"))
-            ProcessResult(result)
-        End If
-
-        match = Regex.Match(path, test & ".*Test\.php")
-        If (match.Success) Then
-            Dim args = cmd_args.Replace("{file}", match.Value)
-            Dim result = runner.Run(cmd, args, basedir.Replace("/", "\"))
-            ProcessResult(result)
-        End If
-
+            Dim match = Regex.Match(path, watch)
+            If match.Success Then
+                For x = 0 To match.Groups.Count - 1
+                    args = args.Replace("{" & x & "}", match.Groups(x).Value)
+                Next
+                Dim result As String = runner.Run(cmd, args, basedir.Replace("/", "\"))
+                ProcessResult(result)
+                Exit For
+            End If
+        Next
     End Sub
 
     Private Sub ProcessResult(ByVal result As String)
@@ -116,7 +118,4 @@ Public Class Form1
         NotifyIcon1.ShowBalloonTip(200)
     End Sub
 
-    Private Sub TextBox2_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TextBox2.TextChanged
-
-    End Sub
 End Class

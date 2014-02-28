@@ -82,7 +82,6 @@ Partial Class Form1
         'FileSystemWatcher1
         '
         Me.FileSystemWatcher1.EnableRaisingEvents = True
-        Me.FileSystemWatcher1.Filter = "*.php"
         Me.FileSystemWatcher1.IncludeSubdirectories = True
         Me.FileSystemWatcher1.NotifyFilter = System.IO.NotifyFilters.LastWrite
         Me.FileSystemWatcher1.SynchronizingObject = Me
