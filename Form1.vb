@@ -2,8 +2,6 @@
 Imports System.Diagnostics
 
 Public Class Form1
-
-
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
         FileSystemWatcher1.EnableRaisingEvents = False
         Button1.Enabled = True
@@ -11,30 +9,8 @@ Public Class Form1
     End Sub
 
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
-        'Control.CheckForIllegalCrossThreadCalls = False
-        'watchfolder = New System.IO.FileSystemWatcher()
-
-        'this is the path we want to monitor
         FileSystemWatcher1.Path = TextBox1.Text()
 
-        'Add a list of Filter we want to specify
-        'make sure you use OR for each Filter as we need to
-        'all of those 
-
-        'FileSystemWatcher1.NotifyFilter = IO.NotifyFilters.DirectoryName
-        'FileSystemWatcher1.NotifyFilter = watchfolder.NotifyFilter Or IO.NotifyFilters.FileName
-        'FileSystemWatcher1.NotifyFilter = watchfolder.NotifyFilter Or IO.NotifyFilters.Attributes
-
-
-        ' add the handler to each event
-        'AddHandler watchfolder.Changed, AddressOf logchange
-        'AddHandler watchfolder.Created, AddressOf logchange
-        'AddHandler watchfolder.Deleted, AddressOf logchange
-
-        ' add the rename handler as the signature is different
-        'AddHandler watchfolder.Renamed, AddressOf logrename
-
-        'Set this property to true to start watching
         FileSystemWatcher1.EnableRaisingEvents = True
 
         Button1.Enabled = False
@@ -63,5 +39,14 @@ Public Class Form1
 
     Private Sub Timer1_Tick(ByVal sender As Object, ByVal e As System.EventArgs) Handles Timer1.Tick
         Timer1.Enabled = False
+    End Sub
+
+    Private Sub Button3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button3.Click
+        NotifyIcon1.Icon = SystemIcons.Information
+        NotifyIcon1.BalloonTipTitle = "Balloon Tip Title"
+        NotifyIcon1.BalloonTipText = "Balloon Tip Text."
+        NotifyIcon1.BalloonTipIcon = ToolTipIcon.Error
+        NotifyIcon1.Visible = True
+        NotifyIcon1.ShowBalloonTip(200)
     End Sub
 End Class
