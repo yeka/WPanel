@@ -14,8 +14,8 @@ Namespace Yeka.WPanel
             End If
 
             filewatch = New FileSystemWatcher
-            filewatch.Filter = "*.*"
-            filewatch.Path = file_name
+            filewatch.Filter = Path.GetFileName(file_name)
+            filewatch.Path = Path.GetDirectoryName(file_name)
             filewatch.NotifyFilter = NotifyFilters.LastAccess
             filewatch.EnableRaisingEvents = True
 
@@ -56,7 +56,6 @@ Namespace Yeka.WPanel
                 If line.Trim() = "" Then
                     If C.Count = 4 Then
                         Config.Add(C)
-                        MsgBox("")
                         C = New Collection
                     End If
                     Continue While

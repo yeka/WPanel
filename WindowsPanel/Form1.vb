@@ -12,7 +12,6 @@ Public Class Form1
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
-        MsgBox(Application.StartupPath & "watch.ini")
         config = New Yeka.WPanel.SimpleConfig(Application.StartupPath & "\watch.ini")
     End Sub
 
