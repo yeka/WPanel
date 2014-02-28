@@ -14,8 +14,8 @@ Namespace Yeka.WPanel
             End If
 
             filewatch = New FileSystemWatcher
-            filewatch.Filter = file_name
-            filewatch.Path = "C:"
+            filewatch.Filter = "*.*"
+            filewatch.Path = file_name
             filewatch.NotifyFilter = NotifyFilters.LastAccess
             filewatch.EnableRaisingEvents = True
 

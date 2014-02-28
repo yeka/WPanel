@@ -12,7 +12,8 @@ Public Class Form1
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
-        config = New Yeka.WPanel.SimpleConfig("D:\watch.ini")
+        MsgBox(Application.StartupPath & "watch.ini")
+        config = New Yeka.WPanel.SimpleConfig(Application.StartupPath & "\watch.ini")
     End Sub
 
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
@@ -62,16 +63,6 @@ Public Class Form1
         Timer1.Enabled = False
     End Sub
 
-    Private Sub Button3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button3.Click
-        NotifyIcon1.Icon = SystemIcons.Information
-        NotifyIcon1.BalloonTipTitle = "Balloon Tip Title"
-        NotifyIcon1.BalloonTipText = "Balloon Tip Text."
-        NotifyIcon1.BalloonTipIcon = ToolTipIcon.Error
-        NotifyIcon1.Visible = True
-        NotifyIcon1.ShowBalloonTip(200)
-    End Sub
-
-  
     Public Sub CheckForRunner(ByVal path As String)
         For Each I In config.Config
             Dim basedir As String = I("basedir")
