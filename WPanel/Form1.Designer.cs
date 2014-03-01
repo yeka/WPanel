@@ -47,7 +47,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(222, 20);
             this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "X:\\";
             // 
             // button1
             // 
@@ -63,12 +62,13 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(240, 41);
+            this.button2.Location = new System.Drawing.Point(240, 12);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
             this.button2.Text = "Stop";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Visible = false;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // textBox2
@@ -76,11 +76,11 @@
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox2.Location = new System.Drawing.Point(12, 70);
+            this.textBox2.Location = new System.Drawing.Point(12, 41);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox2.Size = new System.Drawing.Size(303, 198);
+            this.textBox2.Size = new System.Drawing.Size(303, 227);
             this.textBox2.TabIndex = 3;
             this.textBox2.WordWrap = false;
             // 
@@ -93,8 +93,11 @@
             // 
             this.watcher.EnableRaisingEvents = true;
             this.watcher.IncludeSubdirectories = true;
-            this.watcher.NotifyFilter = System.IO.NotifyFilters.LastWrite;
+            this.watcher.NotifyFilter = ((System.IO.NotifyFilters)(((System.IO.NotifyFilters.FileName | System.IO.NotifyFilters.LastWrite)
+                        | System.IO.NotifyFilters.LastAccess)));
             this.watcher.SynchronizingObject = this;
+            this.watcher.Renamed += new System.IO.RenamedEventHandler(this.watcher_Renamed);
+            this.watcher.Created += new System.IO.FileSystemEventHandler(this.watcher_Changed);
             this.watcher.Changed += new System.IO.FileSystemEventHandler(this.watcher_Changed);
             // 
             // notifier

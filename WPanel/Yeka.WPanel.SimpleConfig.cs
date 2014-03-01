@@ -28,11 +28,11 @@ namespace Yeka.WPanel
             filewatch = new FileSystemWatcher();
             filewatch.Filter = Path.GetFileName(file_name);
             filewatch.Path = Path.GetDirectoryName(file_name);
-            filewatch.NotifyFilter = NotifyFilters.LastWrite;
+            filewatch.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess;
             filewatch.EnableRaisingEvents = true;
 
             timer = new Timer();
-            timer.Interval = 100;
+            timer.Interval = 200;
             timer.Enabled = false;
 
             setEventHandler();
@@ -44,7 +44,6 @@ namespace Yeka.WPanel
         {
             filewatch.Changed += new FileSystemEventHandler(OnFileChanged);
             filewatch.Created += new FileSystemEventHandler(OnFileChanged);
-            filewatch.Deleted += new FileSystemEventHandler(OnFileChanged);
             timer.Tick += new EventHandler(timerTick);
         }
 
@@ -53,7 +52,7 @@ namespace Yeka.WPanel
             timer.Enabled = false;
         }
 
-        protected void OnFileChanged(object sender, FileSystemEventArgs e)
+        void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             if (timer.Enabled) {
                 return;
@@ -61,16 +60,21 @@ namespace Yeka.WPanel
             timer.Enabled = true;
 
             if (e.ChangeType == WatcherChangeTypes.Changed 
-                || e.ChangeType == WatcherChangeTypes.Created 
-                || e.ChangeType == WatcherChangeTypes.Deleted) {
+                || e.ChangeType == WatcherChangeTypes.Created) {
 
                 reload();
-                fileChanged(this, EventArgs.Empty);
+
+                EventHandler handler = fileChanged;
+                if (handler != null)
+                {
+                    handler(this, EventArgs.Empty);
+                }
             }
         }
 
         public void reload()
         {
+            config.Clear();
             StreamReader reader = new StreamReader(filewatch.Filter);
             Dictionary<string, string> map = new Dictionary<string, string>();
             string line = "";
@@ -93,6 +97,11 @@ namespace Yeka.WPanel
                 config.Add(map);
             }
             reader.Close();
+        }
+
+        public void Sync(System.ComponentModel.ISynchronizeInvoke i)
+        {
+            filewatch.SynchronizingObject = i;
         }
     }
 }

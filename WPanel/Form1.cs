@@ -22,6 +22,8 @@ namespace WindowsFormsApplication1
             try
             {
                 config = new SimpleConfig(config_file);
+                config.fileChanged+=new EventHandler(config_fileChanged);
+                config.Sync(this);
             }
             catch (Exception)
             {
@@ -33,6 +35,12 @@ namespace WindowsFormsApplication1
             runner = new AppRunner();
         }
 
+        void config_fileChanged(object sender, EventArgs e)
+        {
+            textBox2.Text = DateTime.Now.ToString() + Environment.NewLine;
+            textBox2.Text += "Configuration's updated" + Environment.NewLine;
+        }
+
         void timer_Tick(object sender, EventArgs e)
         {
             timer.Enabled = false;
@@ -40,19 +48,18 @@ namespace WindowsFormsApplication1
 
         void watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            if (timer.Enabled)
-            {
-                return;
-            }
-            timer.Enabled = true;
-            string path = e.FullPath.Replace("\\", "/");
-            checkWatcheeAction(path);
+            checkWatcheeAction(e.FullPath);
+        }
+
+        void watcher_Renamed(object sender, System.IO.RenamedEventArgs e)
+        {
+            checkWatcheeAction(e.Name);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            button1.Enabled = false;
-            button2.Enabled = true;
+            button1.Visible  = false;
+            button2.Visible = true;
             watcher.Path = textBox1.Text.Replace("/", "\\");
             watcher.EnableRaisingEvents = true;
         }
@@ -60,23 +67,30 @@ namespace WindowsFormsApplication1
         private void button2_Click(object sender, EventArgs e)
         {
             watcher.EnableRaisingEvents = false;
-            button1.Enabled = true;
-            button2.Enabled = false;
+            button1.Visible = true;
+            button2.Visible = false;
         }
 
         public void checkWatcheeAction(string path)
         {
+            if (timer.Enabled)
+            {
+                return;
+            }
+            
+            path = path.Replace("\\", "/");
             foreach (Dictionary<string, string> conf in config.config)
             {
                 string workdir = conf["workdir"];
-                string watch = conf["watch"];
+                string watch = conf["watch"] + "$";
                 string cmd = conf["command"];
                 string args = conf["arguments"];
                 Match match = Regex.Match(path, watch);
                 if (match.Success)
                 {
+                    timer.Enabled = true;
                     textBox2.Text = DateTime.Now.ToString() + Environment.NewLine;
-                    textBox2.Text += "File " + path + "has been modified" + Environment.NewLine;
+                    textBox2.Text += "File " + path + " has been modified" + Environment.NewLine;
                     Application.DoEvents();
                     for (int i = 0; i < match.Groups.Count; i++)
                     {
