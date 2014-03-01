@@ -11,7 +11,7 @@ namespace Yeka.WPanel
         protected FileSystemWatcher filewatch;
         protected Timer timer;
         protected string file_name;
-        public System.Collections.ArrayList config;
+        public List<Dictionary<string, string>> config;
         public event EventHandler fileChanged;
 
         public SimpleConfig(string filename)
@@ -24,7 +24,7 @@ namespace Yeka.WPanel
 
             file_name = filename;
 
-            config = new System.Collections.ArrayList();
+            config = new List<Dictionary<string, string>>();
             filewatch = new FileSystemWatcher();
             filewatch.Filter = Path.GetFileName(file_name);
             filewatch.Path = Path.GetDirectoryName(file_name);
@@ -74,7 +74,6 @@ namespace Yeka.WPanel
             StreamReader reader = new StreamReader(filewatch.Filter);
             Dictionary<string, string> map = new Dictionary<string, string>();
             string line = "";
-            map["something"] = "Something";
             while (reader.Peek() != -1) {
                 line = reader.ReadLine();
                 if (line.Trim() == "") {
@@ -86,11 +85,14 @@ namespace Yeka.WPanel
                 }
 
                 string[] piece = line.Split('=');
-                map[piece[0].Trim()] = piece[1].Trim();
+                string key = piece[0].Trim().ToLower();
+                string value = piece[1].Trim();
+                map[key] = value;
             }
             if (map.Count == 4) {
                 config.Add(map);
             }
+            reader.Close();
         }
     }
 }

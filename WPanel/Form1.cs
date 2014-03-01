@@ -15,13 +15,10 @@ namespace WindowsFormsApplication1
     {
         protected AppRunner runner;
         protected SimpleConfig config;
-        protected FileSystemWatcher watcher;
-        protected NotifyIcon notifier;
-        protected Timer timer;
 
         public Form1()
         {
-            string config_file = Application.StartupPath + "\\watch.ini";
+            string config_file = Application.StartupPath + @"\watch.ini";
             try
             {
                 config = new SimpleConfig(config_file);
@@ -34,23 +31,6 @@ namespace WindowsFormsApplication1
 
             InitializeComponent();
             runner = new AppRunner();
-
-
-            watcher = new FileSystemWatcher();
-            watcher.EnableRaisingEvents = false;
-            watcher.IncludeSubdirectories = true;
-            watcher.NotifyFilter = NotifyFilters.LastWrite;
-            watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-            watcher.Created += new FileSystemEventHandler(watcher_Changed);
-
-            timer = new Timer();
-            timer.Interval = 100;
-            timer.Enabled = false;
-            timer.Tick += new EventHandler(timer_Tick);
-
-            notifier = new NotifyIcon();
-            notifier.Text = "";
-            notifier.Visible = true;
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -65,7 +45,6 @@ namespace WindowsFormsApplication1
                 return;
             }
             timer.Enabled = true;
-
             string path = e.FullPath.Replace("\\", "/");
             checkWatcheeAction(path);
         }
@@ -142,5 +121,6 @@ namespace WindowsFormsApplication1
             notifier.Icon = SystemIcons.Information;
             notifier.ShowBalloonTip(200);
         }
+
     }
 }
