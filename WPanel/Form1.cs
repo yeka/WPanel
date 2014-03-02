@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 using Yeka.WPanel;
+using System.Management;
 
 namespace WindowsFormsApplication1
 {
@@ -15,6 +16,7 @@ namespace WindowsFormsApplication1
     {
         protected AppRunner runner;
         protected SimpleConfig config;
+        protected ProcessManager pm;
 
         public Form1()
         {
@@ -33,6 +35,26 @@ namespace WindowsFormsApplication1
 
             InitializeComponent();
             runner = new AppRunner();
+            pm = new ProcessManager();
+            pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
+            pm.start();
+            autoStartFileWatcher();
+        }
+
+        private void autoStartFileWatcher()
+        {
+            string workdir = config.getCombinedWorkingDir();
+            if (workdir.Length > 0)
+            {
+                textBox1.Text = workdir;
+                button1_Click();
+            }
+        }
+
+        void pm_onProcessUpdated(object sender, ManagementBaseObject proc, string status)
+        {
+            string msg = ProcessStatus.Start.Equals(status) ? "Start: " : "End: ";
+            AppendTextBox(msg + proc["Name"] + " @ " + proc["ExecutablePath"] + "\r\n");
         }
 
         void config_fileChanged(object sender, EventArgs e)
@@ -58,7 +80,12 @@ namespace WindowsFormsApplication1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            button1.Visible  = false;
+            button1_Click();
+        }
+
+        private void button1_Click()
+        {
+            button1.Visible = false;
             button2.Visible = true;
             watcher.Path = textBox1.Text.Replace("/", "\\");
             watcher.EnableRaisingEvents = true;
@@ -135,6 +162,48 @@ namespace WindowsFormsApplication1
             notifier.Icon = SystemIcons.Information;
             notifier.ShowBalloonTip(200);
         }
+
+        public void AppendTextBox(string value)
+        {
+            if (InvokeRequired)
+            {
+                this.Invoke(new Action<string>(AppendTextBox), new object[] { value });
+                return;
+            }
+
+            textBox2.Text += value;
+        }
+
+        public void renderTemplateFile()
+        {
+            string file = @"V:\temp\abc.txt.template";
+            string outfile = @"V:\temp\abc.txt";
+            string current_dir = Path.GetDirectoryName(file) + Path.DirectorySeparatorChar;
+            string wpanel_dir = Application.StartupPath + Path.DirectorySeparatorChar;
+
+            StreamReader r = new StreamReader(file);
+            string s = r.ReadToEnd();
+            r.Close();
+
+            s = s.Replace(@"{{current_dir\}}", current_dir.Replace(Path.DirectorySeparatorChar + "", @"\"));
+            s = s.Replace(@"{{current_dir\\}}", current_dir.Replace(Path.DirectorySeparatorChar + "", @"\\"));
+            s = s.Replace("{{current_dir/}}", current_dir.Replace(Path.DirectorySeparatorChar + "", "/"));
+            s = s.Replace("{{current_dir}}", current_dir);
+            s = s.Replace(@"{{wpanel_dir\}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", @"\"));
+            s = s.Replace(@"{{wpanel_dir\\}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", @"\\"));
+            s = s.Replace("{{wpanel_dir/}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", "/"));
+            s = s.Replace("{{wpanel_dir}}", wpanel_dir);
+
+            StreamWriter w = new StreamWriter(outfile);
+            w.Write(s);
+            w.Close();
+        }
+
+        void Form1_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
+        {
+            pm.stop();
+        }
+
 
     }
 }

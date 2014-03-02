@@ -16,8 +16,6 @@ namespace Yeka.WPanel
 
         public SimpleConfig(string filename)
         {
-            // filename = filename.Replace(@"\", "/");
-
             if (!File.Exists(filename)) {
                 throw new FileNotFoundException();
             }
@@ -25,6 +23,12 @@ namespace Yeka.WPanel
             file_name = filename;
 
             config = new List<Dictionary<string, string>>();
+            setSelfWatch();
+            reload();
+        }
+
+        private void setSelfWatch()
+        {
             filewatch = new FileSystemWatcher();
             filewatch.Filter = Path.GetFileName(file_name);
             filewatch.Path = Path.GetDirectoryName(file_name);
@@ -36,8 +40,6 @@ namespace Yeka.WPanel
             timer.Enabled = false;
 
             setEventHandler();
-
-            reload();
         }
 
         private void setEventHandler()
@@ -47,12 +49,12 @@ namespace Yeka.WPanel
             timer.Tick += new EventHandler(timerTick);
         }
 
-        void timerTick(object sender, EventArgs e)
+        private void timerTick(object sender, EventArgs e)
         {
             timer.Enabled = false;
         }
 
-        void OnFileChanged(object sender, FileSystemEventArgs e)
+        private void OnFileChanged(object sender, FileSystemEventArgs e)
         {
             if (timer.Enabled) {
                 return;
@@ -99,9 +101,50 @@ namespace Yeka.WPanel
             reader.Close();
         }
 
+        public string getCombinedWorkingDir()
+        {
+            string dir = null;
+            foreach (Dictionary<string, string> conf in config)
+            {
+                if (dir == null)
+                {
+                    dir = conf["workdir"];
+                }
+                else if (dir != conf["workdir"])
+                {
+                    dir = getFirstEqualString(dir, conf["workdir"]);
+                }
+            }
+            return dir;
+        }
+
+        public string getFirstEqualString(string first, string second)
+        {
+            string equals = "";
+            int n1 = first.Length;
+            int n2 = second.Length;
+            int n = (n1 < n2) ? n1 : n2;
+            int i = 0;
+            for (i = 0; i < n; i++)
+            {
+                if (first.Substring(i, 1) != second.Substring(i, 1))
+                {
+                    break;
+                }
+            }
+            equals = first.Substring(0, i);
+            return equals;
+        }
+
+
         public void Sync(System.ComponentModel.ISynchronizeInvoke i)
         {
             filewatch.SynchronizingObject = i;
+        }
+
+        ~SimpleConfig()
+        {
+            filewatch.EnableRaisingEvents = false;
         }
     }
 }
