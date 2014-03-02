@@ -52,12 +52,12 @@
     <Reference Include="Growl.Connector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=980c2339411be384, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Growl.Connector.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Growl.CoreLibrary, Version=2.0.0.0, Culture=neutral, PublicKeyToken=13e59d82e007b064, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Growl.CoreLibrary.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <Private>False</Private>
@@ -130,8 +130,7 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>mkdir lib
-copy *.dll  lib
-del *.dll
-copy "$(SolutionDir)watch.ini" "$(TargetDir)"</PostBuildEvent>
+copy "$(ProjectDir)lib\*.*" lib
+copy "$(SolutionDir)watch.ini" .\watch.ini.dist</PostBuildEvent>
   </PropertyGroup>
 </Project>

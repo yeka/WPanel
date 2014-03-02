@@ -44,6 +44,7 @@ namespace WindowsFormsApplication1
             pm = new ProcessManager();
             pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
             pm.start();
+
             growlBootUp();
             autoStartFileWatcher();
         }
@@ -59,8 +60,22 @@ namespace WindowsFormsApplication1
             growl.Register(growlapp, new Growl.Connector.NotificationType[] { notificationType });
         }
 
-        public void growlNotify(string title, string message, string icon)
+        public void growlNotify(string title, string message, ToolTipIcon bicon)
         {
+            string basedir = Application.StartupPath + Path.DirectorySeparatorChar + "lib" + Path.DirectorySeparatorChar;
+            string icon = "";
+            if (bicon == ToolTipIcon.Info)
+            {
+                icon = basedir + "Accept.png";
+            }
+            else if (bicon == ToolTipIcon.Warning)
+            {
+                icon = basedir + "Warning.png";
+            }
+            else if (bicon == ToolTipIcon.Error)
+            {
+                icon = basedir + "Delete.png";
+            }
             Growl.Connector.Notification notification = new Growl.Connector.Notification(
                 growlapp.Name, //application name
                 notificationType.Name,  // notification name
@@ -115,6 +130,7 @@ namespace WindowsFormsApplication1
         {
             txt_watcher.Text = DateTime.Now.ToString() + Environment.NewLine;
             txt_watcher.Text += "Configuration's updated" + Environment.NewLine;
+            autoStartFileWatcher();
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -190,7 +206,6 @@ namespace WindowsFormsApplication1
             string title;
             string message;
             ToolTipIcon icon;
-            string growlicon = "";
 
             txt_watcher.Text += Environment.NewLine + Environment.NewLine + result;
             if (result.IndexOf("OK") > 0)
@@ -219,8 +234,7 @@ namespace WindowsFormsApplication1
                 icon = ToolTipIcon.Error;
             }
 
-            notify(title, message, icon);
-            growlNotify(title, message, growlicon);
+            growlNotify(title, message, icon);
         }
 
         public void renderTemplateFile()
