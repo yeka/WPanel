@@ -11,5 +11,6 @@
     </BootstrapperUrlHistory>
     <FallbackCulture>en-US</FallbackCulture>
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
+    <ReferencePath>D:\Users\yk\Documents\Visual Studio 2008\Projects\WPanel\WPanel\lib\</ReferencePath>
   </PropertyGroup>
 </Project>

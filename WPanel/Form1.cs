@@ -18,6 +18,12 @@ namespace WindowsFormsApplication1
         protected SimpleConfig config;
         protected ProcessManager pm;
 
+        private Growl.Connector.GrowlConnector growl;
+        private Growl.Connector.NotificationType notificationType;
+        private Growl.Connector.Application growlapp;
+        private string sampleNotificationType = "SAMPLE_NOTIFICATION";
+
+
         public Form1()
         {
             string config_file = Application.StartupPath + @"\watch.ini";
@@ -38,8 +44,44 @@ namespace WindowsFormsApplication1
             pm = new ProcessManager();
             pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
             pm.start();
-
+            growlBootUp();
             autoStartFileWatcher();
+        }
+
+        private void growlBootUp()
+        {
+            notificationType = new Growl.Connector.NotificationType(sampleNotificationType, "Sample Notification");
+
+            growl = new Growl.Connector.GrowlConnector();
+            growl.EncryptionAlgorithm = Growl.Connector.Cryptography.SymmetricAlgorithmType.PlainText;
+
+            growlapp = new Growl.Connector.Application("WPanel");
+            growl.Register(growlapp, new Growl.Connector.NotificationType[] { notificationType });
+        }
+
+        public void growlNotify(string title, string message, string icon)
+        {
+            Growl.Connector.Notification notification = new Growl.Connector.Notification(
+                growlapp.Name, //application name
+                notificationType.Name,  // notification name
+                DateTime.Now.Ticks.ToString(), // id
+                title, // title
+                message, // message
+                icon, // icon, image location
+                false, // stricky
+                Growl.Connector.Priority.Normal, // priority
+                "" // coalescingID
+            );
+            growl.Notify(notification);
+        }
+
+        public void notify(string title, string message, ToolTipIcon  icon)
+        {
+            notifier.BalloonTipTitle = title;
+            notifier.BalloonTipText = message;
+            notifier.BalloonTipIcon = icon;
+            notifier.Icon = SystemIcons.Information;
+            notifier.ShowBalloonTip(200);
         }
 
         private void autoStartFileWatcher()
@@ -145,35 +187,40 @@ namespace WindowsFormsApplication1
 
         public void processResult(string result)
         {
+            string title;
+            string message;
+            ToolTipIcon icon;
+            string growlicon = "";
+
             txt_watcher.Text += Environment.NewLine + Environment.NewLine + result;
             if (result.IndexOf("OK") > 0)
             {
-                notifier.BalloonTipText = Regex.Match(result, "OK.*").Value;
-                if (notifier.BalloonTipText.IndexOf("but") > 0)
+                message = Regex.Match(result, "OK.*").Value;
+                if (message.IndexOf("but") > 0)
                 {
-                    notifier.BalloonTipIcon = ToolTipIcon.Warning;
+                    icon = ToolTipIcon.Warning;
                 }
                 else
                 {
-                    notifier.BalloonTipIcon = ToolTipIcon.Info;
+                    icon = ToolTipIcon.Info;
                 }
-                notifier.BalloonTipTitle = "Success";
+                title = "Success";
             }
             else if (result.IndexOf("FAILURES") > 0)
             {
-                notifier.BalloonTipText = Regex.Match(result, "FAILURES.*").Value;
-                notifier.BalloonTipTitle = "FAIL";
-                notifier.BalloonTipIcon = ToolTipIcon.Error;
+                title = "FAIL";
+                message = Regex.Match(result, "FAILURES.*").Value;
+                icon = ToolTipIcon.Error;
             }
             else
             {
-                notifier.BalloonTipText = "Error!! Please check the test result!";
-                notifier.BalloonTipTitle = "FAIL";
-                notifier.BalloonTipIcon = ToolTipIcon.Error;
+                title = "FAIL";
+                message = "Error!! Please check the test result!";
+                icon = ToolTipIcon.Error;
             }
 
-            notifier.Icon = SystemIcons.Information;
-            notifier.ShowBalloonTip(200);
+            notify(title, message, icon);
+            growlNotify(title, message, growlicon);
         }
 
         public void renderTemplateFile()
