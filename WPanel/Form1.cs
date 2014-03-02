@@ -62,17 +62,17 @@ namespace WindowsFormsApplication1
                 List<string> a = pm.getProcess();
                 foreach (string i in a)
                 {
-                    textBox2.Text += i + "\r\n";
+                    txt_debug.Text += i + "\r\n";
                 }
 
-                textBox2.Text += value;
+                txt_debug.Text += value;
             });
         }
 
         void config_fileChanged(object sender, EventArgs e)
         {
-            textBox2.Text = DateTime.Now.ToString() + Environment.NewLine;
-            textBox2.Text += "Configuration's updated" + Environment.NewLine;
+            txt_watcher.Text = DateTime.Now.ToString() + Environment.NewLine;
+            txt_watcher.Text += "Configuration's updated" + Environment.NewLine;
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -128,13 +128,14 @@ namespace WindowsFormsApplication1
                 if (match.Success)
                 {
                     timer.Enabled = true;
-                    textBox2.Text = DateTime.Now.ToString() + Environment.NewLine;
-                    textBox2.Text += "File " + path + " has been modified" + Environment.NewLine;
+                    txt_watcher.Text = DateTime.Now.ToString() + Environment.NewLine;
+                    txt_watcher.Text += "File " + path + " has been modified" + Environment.NewLine + Environment.NewLine;
                     Application.DoEvents();
                     for (int i = 0; i < match.Groups.Count; i++)
                     {
                         args = args.Replace("{" + i + "}", match.Groups[i].Value);
                     }
+                    txt_watcher.Text += "Running: " + cmd + " " + args + Environment.NewLine;
                     string result = runner.Run(cmd, args, workdir);
                     processResult(result);
                     return;
@@ -144,7 +145,7 @@ namespace WindowsFormsApplication1
 
         public void processResult(string result)
         {
-            textBox2.Text += Environment.NewLine + Environment.NewLine + result;
+            txt_watcher.Text += Environment.NewLine + Environment.NewLine + result;
             if (result.IndexOf("OK") > 0)
             {
                 notifier.BalloonTipText = Regex.Match(result, "OK.*").Value;
