@@ -38,6 +38,7 @@ namespace WindowsFormsApplication1
             pm = new ProcessManager();
             pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
             pm.start();
+
             autoStartFileWatcher();
         }
 
@@ -51,10 +52,21 @@ namespace WindowsFormsApplication1
             }
         }
 
-        void pm_onProcessUpdated(object sender, ManagementBaseObject proc, string status)
+        public void pm_onProcessUpdated(object sender, ManagementBaseObject proc, string status)
         {
-            string msg = ProcessStatus.Start.Equals(status) ? "Start: " : "End: ";
-            AppendTextBox(msg + proc["Name"] + " @ " + proc["ExecutablePath"] + "\r\n");
+            Invoke((MethodInvoker)delegate
+            {
+                string msg = ProcessStatus.Start.Equals(status) ? "Start: " : "End: ";
+                string value = msg + proc["Name"] + " @ " + proc["ExecutablePath"] + "\r\n";
+
+                List<string> a = pm.getProcess();
+                foreach (string i in a)
+                {
+                    textBox2.Text += i + "\r\n";
+                }
+
+                textBox2.Text += value;
+            });
         }
 
         void config_fileChanged(object sender, EventArgs e)
@@ -161,17 +173,6 @@ namespace WindowsFormsApplication1
 
             notifier.Icon = SystemIcons.Information;
             notifier.ShowBalloonTip(200);
-        }
-
-        public void AppendTextBox(string value)
-        {
-            if (InvokeRequired)
-            {
-                this.Invoke(new Action<string>(AppendTextBox), new object[] { value });
-                return;
-            }
-
-            textBox2.Text += value;
         }
 
         public void renderTemplateFile()

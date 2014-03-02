@@ -2,6 +2,8 @@
 using System.IO;
 using System.Diagnostics;
 using System.Management;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace Yeka.WPanel
 {
@@ -29,6 +31,37 @@ namespace Yeka.WPanel
         {
             startWatcher.Stop();
             stopWatcher.Stop();
+        }
+
+        public List<string> getProcess()
+        {
+            Process[] process_list = Process.GetProcesses();
+            List<string> found = new List<string>();
+
+            foreach(Process proc in process_list)
+            {
+                if (Regex.Match(proc.ProcessName, "php.*").Success)
+                {
+                    found.Add(proc.ProcessName);
+                }
+                else if (Regex.Match(proc.ProcessName, "nginx.*").Success )
+                {
+                    found.Add(proc.ProcessName);
+                }
+                else if (Regex.Match(proc.ProcessName, "apache.*").Success)
+                {
+                    found.Add(proc.ProcessName);
+                }
+                else if (Regex.Match(proc.ProcessName, "mysql.*").Success)
+                {
+                    found.Add(proc.ProcessName);
+                }
+                else if (Regex.Match(proc.ProcessName, "httpd.*").Success)
+                {
+                    found.Add(proc.ProcessName);
+                }
+            }
+            return found;
         }
 
         private ManagementEventWatcher createWatcher(string status)
