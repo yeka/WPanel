@@ -116,9 +116,33 @@ namespace WindowsFormsApplication1
                 string value = msg + proc["Name"] + " @ " + proc["ExecutablePath"] + "\r\n";
 
                 List<string> a = pm.getProcess();
+                lbl_apache.ForeColor = Color.Black;
+                lbl_nginx.ForeColor = Color.Black;
+                lbl_mysql.ForeColor = Color.Black;
+                lbl_php.ForeColor = Color.Black;
                 foreach (string i in a)
                 {
                     txt_debug.AppendText(i + "\r\n");
+                    if (Regex.Match(i.ToLower(), "httpd").Success)
+                    {
+                        lbl_apache.ForeColor = Color.Green;
+                    }
+                    else if (Regex.Match(i.ToLower(), "apache").Success)
+                    {
+                        lbl_apache.ForeColor = Color.Green;
+                    }
+                    else if (Regex.Match(i.ToLower(), "nginx").Success)
+                    {
+                        lbl_nginx.ForeColor = Color.Green;
+                    }
+                    else if (Regex.Match(i.ToLower(), "mysql").Success)
+                    {
+                        lbl_mysql.ForeColor = Color.Green;
+                    }
+                    else if (Regex.Match(i.ToLower(), "php").Success)
+                    {
+                        lbl_php.ForeColor = Color.Green;
+                    }
                 }
 
                 txt_debug.AppendText(value);

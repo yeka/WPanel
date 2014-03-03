@@ -9,15 +9,15 @@ namespace Yeka.WPanel.AppServer
 {
     interface AppServerInterface
     {
-        public void setAppDir(string dir);
-        public void setProcessNamePattern(string name_pattern);
-        public void getProcess(process_collections);
-        public void count();
-        public void start();
-        public void restart(); // Soft Reload/Restart, fallback to kill & start if n/a
-        public void restartHard();
-        public void stop(); // Soft Stop, fallback to kill if n/a
-        public void kill(); // Kill process
+        void setAppDir(string dir);
+        void setProcessNamePattern(string name_pattern);
+        void getProcess(string process_collections);
+        void count();
+        void start();
+        void restart(); // Soft Reload/Restart, fallback to kill & start if n/a
+        void restartHard();
+        void stop(); // Soft Stop, fallback to kill if n/a
+        void kill(); // Kill process
     }
 
     public abstract class BaseAppServer
@@ -25,7 +25,7 @@ namespace Yeka.WPanel.AppServer
         protected string app_dir;
         protected string proc_name_pattern;
 
-        public void BaseAppServer(string dir, string name_pattern)
+        public BaseAppServer(string dir, string name_pattern)
         {
             setAppDir(dir);
             setProcessNamePattern(name_pattern);
@@ -41,7 +41,7 @@ namespace Yeka.WPanel.AppServer
             proc_name_pattern = name_pattern;
         }
 
-        public void getProcess(process_collections) {}
+        public void getProcess(string process_collections) {}
         public void count() {}
         public void start() {}
         public void restart() {}
@@ -52,18 +52,22 @@ namespace Yeka.WPanel.AppServer
 
     public class Nginx : BaseAppServer
     {
+        public Nginx(string dir, string name_pattern) : base(dir, name_pattern) { }
     }
 
     public class PHP : BaseAppServer
     {
+        public PHP(string dir, string name_pattern) : base(dir, name_pattern) { }
     }
 
     public class MySQL : BaseAppServer
     {
+        public MySQL(string dir, string name_pattern) : base(dir, name_pattern) { }
     }
 
     public class Apache : BaseAppServer
     {
+        public Apache(string dir, string name_pattern) : base(dir, name_pattern) { }
     }
 
 
