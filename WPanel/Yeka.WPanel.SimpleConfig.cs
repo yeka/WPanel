@@ -32,7 +32,7 @@ namespace Yeka.WPanel
             filewatch = new FileSystemWatcher();
             filewatch.Path = Path.GetDirectoryName(file_name);
             filewatch.Filter = "*.*";
-            filewatch.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess;
+            filewatch.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess | NotifyFilters.FileName;
             filewatch.EnableRaisingEvents = true;
 
             timer = new Timer();

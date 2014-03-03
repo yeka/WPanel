@@ -23,7 +23,6 @@ namespace WindowsFormsApplication1
         private Growl.Connector.Application growlapp;
         private string sampleNotificationType = "SAMPLE_NOTIFICATION";
 
-
         public Form1()
         {
             string config_file = Application.StartupPath + @"\watch.ini";
@@ -119,10 +118,10 @@ namespace WindowsFormsApplication1
                 List<string> a = pm.getProcess();
                 foreach (string i in a)
                 {
-                    txt_debug.Text += i + "\r\n";
+                    txt_debug.AppendText(i + "\r\n");
                 }
 
-                txt_debug.Text += value;
+                txt_debug.AppendText(value);
             });
         }
 
@@ -273,7 +272,6 @@ namespace WindowsFormsApplication1
         {
             pm.stop();
         }
-
 
     }
 }
