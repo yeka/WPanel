@@ -30,8 +30,8 @@ namespace Yeka.WPanel
         private void setSelfWatch()
         {
             filewatch = new FileSystemWatcher();
-            filewatch.Filter = Path.GetFileName(file_name);
             filewatch.Path = Path.GetDirectoryName(file_name);
+            filewatch.Filter = "*.*";
             filewatch.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess;
             filewatch.EnableRaisingEvents = true;
 
@@ -46,6 +46,7 @@ namespace Yeka.WPanel
         {
             filewatch.Changed += new FileSystemEventHandler(OnFileChanged);
             filewatch.Created += new FileSystemEventHandler(OnFileChanged);
+            filewatch.Renamed += new RenamedEventHandler(OnFileChanged);
             timer.Tick += new EventHandler(timerTick);
         }
 
@@ -54,9 +55,20 @@ namespace Yeka.WPanel
             timer.Enabled = false;
         }
 
+        private void OnFileChanged(object sender, RenamedEventArgs e)
+        {
+            if (Path.GetFileName(e.FullPath) != Path.GetFileName(file_name))
+            {
+                return;
+            }
+
+            reload();
+        }
+
         private void OnFileChanged(object sender, FileSystemEventArgs e)
         {
-            if (timer.Enabled) {
+            if (Path.GetFileName(e.FullPath) != Path.GetFileName(file_name) || timer.Enabled)
+            {
                 return;
             }
             timer.Enabled = true;
@@ -65,19 +77,24 @@ namespace Yeka.WPanel
                 || e.ChangeType == WatcherChangeTypes.Created) {
 
                 reload();
-
-                EventHandler handler = fileChanged;
-                if (handler != null)
-                {
-                    handler(this, EventArgs.Empty);
-                }
             }
         }
 
         public void reload()
         {
+            StreamReader reader;
+            System.Threading.Thread.Sleep(500); // Give a chance for editor to close config file before we use it.
+            try
+            {
+                reader = new StreamReader(file_name);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("config in use, can't reload");
+                return;
+            }
+
             config.Clear();
-            StreamReader reader = new StreamReader(filewatch.Filter);
             Dictionary<string, string> map = new Dictionary<string, string>();
             string line = "";
             while (reader.Peek() != -1) {
@@ -99,6 +116,12 @@ namespace Yeka.WPanel
                 config.Add(map);
             }
             reader.Close();
+
+            EventHandler handler = fileChanged;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+            }
         }
 
         public string getCombinedWorkingDir()

@@ -30,12 +30,12 @@ namespace WindowsFormsApplication1
             try
             {
                 config = new SimpleConfig(config_file);
-                config.fileChanged+=new EventHandler(config_fileChanged);
+                config.fileChanged += new EventHandler(config_fileChanged);
                 config.Sync(this);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                MessageBox.Show("File not found: " + config_file);
+                MessageBox.Show("Error initializing: " + config_file + "\n" + e.Message);
                 this.Close();
             }
 
@@ -145,7 +145,7 @@ namespace WindowsFormsApplication1
 
         void watcher_Renamed(object sender, System.IO.RenamedEventArgs e)
         {
-            checkWatcheeAction(e.Name);
+            checkWatcheeAction(e.FullPath);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -175,6 +175,7 @@ namespace WindowsFormsApplication1
                 return;
             }
             
+
             path = path.Replace("\\", "/");
             foreach (Dictionary<string, string> conf in config.config)
             {
@@ -182,6 +183,12 @@ namespace WindowsFormsApplication1
                 string watch = conf["watch"] + "$";
                 string cmd = conf["command"];
                 string args = conf["arguments"];
+
+                if (path.Substring(0, workdir.Length).ToLower() != workdir.ToLower())
+                {
+                    continue;
+                }
+
                 Match match = Regex.Match(path, watch);
                 if (match.Success)
                 {
