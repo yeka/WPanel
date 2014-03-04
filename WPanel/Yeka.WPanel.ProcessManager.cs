@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using Yeka.WPanel.AppServer;
 
 namespace Yeka.WPanel
 {
@@ -11,12 +12,14 @@ namespace Yeka.WPanel
     {
         protected ManagementEventWatcher startWatcher;
         protected ManagementEventWatcher stopWatcher;
+        protected List<AppServerInterface> registeredApp;
 
         public delegate void ProcessUpdateEventHandler(object sender, ManagementBaseObject proc, string status);
         public event ProcessUpdateEventHandler onProcessUpdated;
 
         public ProcessManager()
         {
+            registeredApp = new List<AppServerInterface>();
             startWatcher = createWatcher(ProcessStatus.Start);
             stopWatcher = createWatcher(ProcessStatus.Stop);
         }
@@ -31,6 +34,25 @@ namespace Yeka.WPanel
         {
             startWatcher.Stop();
             stopWatcher.Stop();
+        }
+
+        public void registerApp(AppServerInterface app)
+        {
+            registeredApp.Add(app);
+        }
+
+        public void reloadProcess()
+        {
+            Process[] process_list = Process.GetProcesses();
+            foreach (AppServerInterface app in registeredApp)
+            {
+                app.clearProcess();
+                foreach(Process proc in process_list)
+                {
+                    app.addProcess(proc);
+                }
+            }
+
         }
 
         public List<string> getProcess()

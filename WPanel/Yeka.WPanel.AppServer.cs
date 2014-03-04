@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Yeka.WPanel.AppServer
 {
-    interface AppServerInterface
+    public interface AppServerInterface
     {
         void setAppDir(string dir);
         void setProcessNamePattern(string name_pattern);
@@ -18,12 +18,17 @@ namespace Yeka.WPanel.AppServer
         void restartHard();
         void stop(); // Soft Stop, fallback to kill if n/a
         void kill(); // Kill process
+
+        // Process collections
+        void clearProcess();
+        void addProcess();
     }
 
     public abstract class BaseAppServer
     {
         protected string app_dir;
         protected string proc_name_pattern;
+        protected Process[] process;
 
         public BaseAppServer(string dir, string name_pattern)
         {
