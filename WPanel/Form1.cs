@@ -217,12 +217,12 @@ namespace WindowsFormsApplication1
                     timer.Enabled = true;
                     txt_watcher.Text = DateTime.Now.ToString() + Environment.NewLine;
                     txt_watcher.Text += "File " + path + " has been modified" + Environment.NewLine + Environment.NewLine;
-                    Application.DoEvents();
                     for (int i = 0; i < match.Groups.Count; i++)
                     {
                         args = args.Replace("{" + i + "}", match.Groups[i].Value);
                     }
                     txt_watcher.Text += "Running: " + cmd + " " + args + Environment.NewLine;
+                    Application.DoEvents();
                     string result = runner.Run(cmd, args, workdir);
                     processResult(result);
                     return;
