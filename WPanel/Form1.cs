@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.IO;
 using Yeka.WPanel;
+using Yeka.WPanel.AppServer;
 using System.Management;
 
 namespace WindowsFormsApplication1
@@ -40,7 +41,12 @@ namespace WindowsFormsApplication1
 
             InitializeComponent();
             runner = new AppRunner();
+
             pm = new ProcessManager();
+            pm.registerApp(new Apache("", ""));
+            pm.registerApp(new Nginx("", ""));
+            pm.registerApp(new PHP("", ""));
+            pm.registerApp(new MySQL("", ""));
             pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
             pm.start();
 
@@ -122,34 +128,23 @@ namespace WindowsFormsApplication1
 
         public void updateProcessInfo()
         {
-
-            List<string> a = pm.getProcess();
-            lbl_apache.ForeColor = Color.Black;
-            lbl_nginx.ForeColor = Color.Black;
-            lbl_mysql.ForeColor = Color.Black;
-            lbl_php.ForeColor = Color.Black;
-            foreach (string i in a)
+            pm.reloadProcess();
+            foreach (AppServerInterface app in pm.registeredApp)
             {
-                txt_debug.AppendText(i + "\r\n");
-                if (Regex.Match(i.ToLower(), "httpd").Success)
+                switch (app.name)
                 {
-                    lbl_apache.ForeColor = Color.Green;
-                }
-                else if (Regex.Match(i.ToLower(), "apache").Success)
-                {
-                    lbl_apache.ForeColor = Color.Green;
-                }
-                else if (Regex.Match(i.ToLower(), "nginx").Success)
-                {
-                    lbl_nginx.ForeColor = Color.Green;
-                }
-                else if (Regex.Match(i.ToLower(), "mysql").Success)
-                {
-                    lbl_mysql.ForeColor = Color.Green;
-                }
-                else if (Regex.Match(i.ToLower(), "php").Success)
-                {
-                    lbl_php.ForeColor = Color.Green;
+                    case "Apache":
+                        lbl_apache.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        break;
+                    case "Nginx":
+                        lbl_nginx.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        break;
+                    case "MySQL":
+                        lbl_mysql.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        break;
+                    case "PHP":
+                        lbl_php.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        break;
                 }
             }
         }

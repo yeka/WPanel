@@ -12,7 +12,7 @@ namespace Yeka.WPanel
     {
         protected ManagementEventWatcher startWatcher;
         protected ManagementEventWatcher stopWatcher;
-        protected List<AppServerInterface> registeredApp;
+        public List<AppServerInterface> registeredApp;
 
         public delegate void ProcessUpdateEventHandler(object sender, ManagementBaseObject proc, string status);
         public event ProcessUpdateEventHandler onProcessUpdated;
@@ -52,7 +52,6 @@ namespace Yeka.WPanel
                     app.addProcess(proc);
                 }
             }
-
         }
 
         public List<string> getProcess()
