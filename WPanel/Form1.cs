@@ -198,7 +198,6 @@ namespace WindowsFormsApplication1
                 return;
             }
             
-
             path = path.Replace("\\", "/");
             foreach (Dictionary<string, string> conf in config.config)
             {
@@ -207,7 +206,7 @@ namespace WindowsFormsApplication1
                 string cmd = conf["command"];
                 string args = conf["arguments"];
 
-                if (path.Substring(0, workdir.Length).ToLower() != workdir.ToLower())
+                if (workdir.Length > path.Length || path.Substring(0, workdir.Length).ToLower() != workdir.ToLower())
                 {
                     continue;
                 }
