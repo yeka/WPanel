@@ -14,8 +14,7 @@ namespace WindowsFormsApplication1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            AppDomain.CurrentDomain.AppendPrivatePath("lib");
+            AppDomain.CurrentDomain.AppendPrivatePath(Application.StartupPath + "\\lib");
 
             Form f = new Form1();
             if (!f.IsDisposed)
