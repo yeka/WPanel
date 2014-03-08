@@ -56,25 +56,24 @@ namespace WindowsFormsApplication1
             
             path = Application.StartupPath + Path.DirectorySeparatorChar + "apache.ini";
             dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
-            if (dir != "") { MessageBox.Show(dir);  }
+            btnApacheStart.Enabled = dir != "";
+            if (dir != "") { MessageBox.Show(dir); }
             pm.registerApp(new Apache(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "nginx.ini";
             dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
+            btnNginxStart.Enabled = dir != "";
             if (dir != "") { MessageBox.Show(dir); }
             pm.registerApp(new Nginx(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "php.ini";
             dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
-            if (dir != "")
-            {
-                btnPHPStart.Enabled = true;
-            }
+            btnPHPStart.Enabled = dir != "";
             pm.registerApp(new PHP(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "mysql.ini";
             dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
-            if (dir != "") { MessageBox.Show(dir); }
+            btnMySQLStart.Enabled = dir != "";
             pm.registerApp(new MySQL(dir, ""));
 
             pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
