@@ -114,12 +114,17 @@ namespace Yeka.WPanel.AppServer
                 registeredApp.Add(proc);
             }
         }
+
+        public override void start()
+        {
+            run("nginx.exe", "", app_dir);
+        }
     }
 
     public class PHP : BaseAppServer
     {
         public PHP(string dir, string name_pattern) : base(dir, name_pattern) { }
-        
+
         public override string name
         {
             get
@@ -138,7 +143,7 @@ namespace Yeka.WPanel.AppServer
 
         public override void start()
         {
-            run("php-cgi.exe", "", app_dir);
+            run("php-cgi.exe", "-b 127.0.0.1:9001", app_dir);
         }
     }
 
