@@ -56,7 +56,13 @@ namespace Yeka.WPanel.AppServer
         public void restart() { }
         public void restartHard() { }
         public void stop() { }
-        public void kill() { }
+        public void kill()
+        {
+            for (int i = 0; i < registeredApp.Count; i++)
+            {
+                registeredApp[i].Kill();
+            }
+        }
 
         public int count
         {

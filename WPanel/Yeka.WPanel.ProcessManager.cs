@@ -17,6 +17,17 @@ namespace Yeka.WPanel
         public delegate void ProcessUpdateEventHandler(object sender, ManagementBaseObject proc, string status);
         public event ProcessUpdateEventHandler onProcessUpdated;
 
+        public AppServerInterface get(string name)
+        {
+            AppServerInterface app = null;
+            for (int i = 0; i < registeredApp.Count; i++)
+            {
+                app = registeredApp[i];
+                if (app.name.ToLower() == name.ToLower()) { return app; }
+            }
+            return null;
+        }
+
         public ProcessManager()
         {
             registeredApp = new List<AppServerInterface>();

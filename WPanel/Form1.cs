@@ -42,17 +42,40 @@ namespace WindowsFormsApplication1
             InitializeComponent();
             runner = new AppRunner();
 
-            pm = new ProcessManager();
-            pm.registerApp(new Apache("", ""));
-            pm.registerApp(new Nginx("", ""));
-            pm.registerApp(new PHP("", ""));
-            pm.registerApp(new MySQL("", ""));
-            pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
-            pm.start();
-
+            processManagerBootUp();
             growlBootUp();
             autoStartFileWatcher();
             updateProcessInfo();
+        }
+
+        private void processManagerBootUp()
+        {
+            string dir = "";
+            string path = "";
+            pm = new ProcessManager();
+
+            path = Application.StartupPath + Path.DirectorySeparatorChar + "apache.ini";
+            dir = File.Exists(path) ? fileGetContents(path) : "";
+            if (dir != "") { MessageBox.Show(dir);  }
+            pm.registerApp(new Apache(dir, ""));
+
+            path = Application.StartupPath + Path.DirectorySeparatorChar + "nginx.ini";
+            dir = File.Exists(path) ? fileGetContents(path) : "";
+            if (dir != "") { MessageBox.Show(dir); }
+            pm.registerApp(new Nginx(dir, ""));
+
+            path = Application.StartupPath + Path.DirectorySeparatorChar + "php.ini";
+            dir = File.Exists(path) ? fileGetContents(path) : "";
+            if (dir != "") { MessageBox.Show(dir); }
+            pm.registerApp(new PHP(dir, ""));
+
+            path = Application.StartupPath + Path.DirectorySeparatorChar + "mysql.ini";
+            dir = File.Exists(path) ? fileGetContents(path) : "";
+            if (dir != "") { MessageBox.Show(dir); }
+            pm.registerApp(new MySQL(dir, ""));
+
+            pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
+            pm.start();
         }
 
         private void growlBootUp()
@@ -135,15 +158,19 @@ namespace WindowsFormsApplication1
                 {
                     case "Apache":
                         lbl_apache.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        btnApacheStop.Enabled = app.count > 0;
                         break;
                     case "Nginx":
                         lbl_nginx.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        btnNginxStop.Enabled = app.count > 0;
                         break;
                     case "MySQL":
                         lbl_mysql.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        btnMySQLStop.Enabled = app.count > 0;
                         break;
                     case "PHP":
                         lbl_php.ForeColor = app.count > 0 ? Color.Green : Color.Black;
+                        btnPHPStop.Enabled = app.count > 0;
                         break;
                 }
             }
@@ -291,9 +318,54 @@ namespace WindowsFormsApplication1
             w.Close();
         }
 
+        public string fileGetContents(string fileName)
+        {
+            string sContents = string.Empty;
+            try
+            {
+                if (fileName.IndexOf("http:") > -1)
+                { // URL 
+                    System.Net.WebClient wc = new System.Net.WebClient();
+                    byte[] response = wc.DownloadData(fileName);
+                    sContents = System.Text.Encoding.ASCII.GetString(response);
+                }
+                else
+                {
+                    // Regular Filename 
+                    System.IO.StreamReader sr = new System.IO.StreamReader(fileName);
+                    sContents = sr.ReadToEnd();
+                    sr.Close();
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return sContents;
+        }
+
         void Form1_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
             pm.stop();
+        }
+
+        private void btnNginxStop_Click(object sender, EventArgs e)
+        {
+            pm.get("Nginx").kill();
+        }
+
+        private void btnPHPStop_Click(object sender, EventArgs e)
+        {
+            pm.get("PHP").kill();
+        }
+
+        private void btnApacheStop_Click(object sender, EventArgs e)
+        {
+            pm.get("Apache").kill();
+        }
+
+        private void btnMySQLStop_Click(object sender, EventArgs e)
+        {
+            pm.get("MySQL").kill();
         }
     }
 }

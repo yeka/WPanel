@@ -155,7 +155,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(454, 227);
+            this.tabPage2.Size = new System.Drawing.Size(436, 250);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Debug";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -211,42 +211,51 @@
             // 
             // btnApacheStop
             // 
+            this.btnApacheStop.Enabled = false;
             this.btnApacheStop.Location = new System.Drawing.Point(98, 12);
             this.btnApacheStop.Name = "btnApacheStop";
             this.btnApacheStop.Size = new System.Drawing.Size(50, 20);
             this.btnApacheStop.TabIndex = 9;
             this.btnApacheStop.Text = "Stop";
             this.btnApacheStop.UseVisualStyleBackColor = true;
+            this.btnApacheStop.Click += new System.EventHandler(this.btnApacheStop_Click);
             // 
             // btnNginxStop
             // 
+            this.btnNginxStop.Enabled = false;
             this.btnNginxStop.Location = new System.Drawing.Point(98, 38);
             this.btnNginxStop.Name = "btnNginxStop";
             this.btnNginxStop.Size = new System.Drawing.Size(50, 20);
             this.btnNginxStop.TabIndex = 10;
             this.btnNginxStop.Text = "Stop";
             this.btnNginxStop.UseVisualStyleBackColor = true;
+            this.btnNginxStop.Click += new System.EventHandler(this.btnNginxStop_Click);
             // 
             // btnMySQLStop
             // 
+            this.btnMySQLStop.Enabled = false;
             this.btnMySQLStop.Location = new System.Drawing.Point(98, 64);
             this.btnMySQLStop.Name = "btnMySQLStop";
             this.btnMySQLStop.Size = new System.Drawing.Size(50, 20);
             this.btnMySQLStop.TabIndex = 11;
             this.btnMySQLStop.Text = "Stop";
             this.btnMySQLStop.UseVisualStyleBackColor = true;
+            this.btnMySQLStop.Click += new System.EventHandler(this.btnMySQLStop_Click);
             // 
             // btnPHPStop
             // 
+            this.btnPHPStop.Enabled = false;
             this.btnPHPStop.Location = new System.Drawing.Point(98, 90);
             this.btnPHPStop.Name = "btnPHPStop";
             this.btnPHPStop.Size = new System.Drawing.Size(50, 20);
             this.btnPHPStop.TabIndex = 12;
             this.btnPHPStop.Text = "Stop";
             this.btnPHPStop.UseVisualStyleBackColor = true;
+            this.btnPHPStop.Click += new System.EventHandler(this.btnPHPStop_Click);
             // 
             // btnPHPStart
             // 
+            this.btnPHPStart.Enabled = false;
             this.btnPHPStart.Location = new System.Drawing.Point(154, 90);
             this.btnPHPStart.Name = "btnPHPStart";
             this.btnPHPStart.Size = new System.Drawing.Size(50, 20);
@@ -256,6 +265,7 @@
             // 
             // btnMySQLStart
             // 
+            this.btnMySQLStart.Enabled = false;
             this.btnMySQLStart.Location = new System.Drawing.Point(154, 64);
             this.btnMySQLStart.Name = "btnMySQLStart";
             this.btnMySQLStart.Size = new System.Drawing.Size(50, 20);
@@ -265,6 +275,7 @@
             // 
             // btnNginxStart
             // 
+            this.btnNginxStart.Enabled = false;
             this.btnNginxStart.Location = new System.Drawing.Point(154, 38);
             this.btnNginxStart.Name = "btnNginxStart";
             this.btnNginxStart.Size = new System.Drawing.Size(50, 20);
@@ -274,6 +285,7 @@
             // 
             // btnApacheStart
             // 
+            this.btnApacheStart.Enabled = false;
             this.btnApacheStart.Location = new System.Drawing.Point(154, 12);
             this.btnApacheStart.Name = "btnApacheStart";
             this.btnApacheStart.Size = new System.Drawing.Size(50, 20);
@@ -305,7 +317,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "WPanel";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.watcher)).EndInit();
             this.tabControl1.ResumeLayout(false);
