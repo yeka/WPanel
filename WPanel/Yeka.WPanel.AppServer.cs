@@ -52,7 +52,7 @@ namespace Yeka.WPanel.AppServer
 
         public void getProcess(string process_collections) {}
 
-        public void start() { }
+        public virtual void start() { }
         public void restart() { }
         public void restartHard() { }
         public void stop() { }
@@ -78,6 +78,20 @@ namespace Yeka.WPanel.AppServer
         }
 
         public abstract void addProcess(Process proc);
+
+        protected void run(string command, string arguments, string working_dir)
+        {
+            ProcessStartInfo start_info = new ProcessStartInfo();
+            start_info.WorkingDirectory = working_dir;
+            start_info.FileName = command;
+            start_info.Arguments = arguments;
+            start_info.UseShellExecute = false;
+            start_info.CreateNoWindow = true;
+
+            Process myprocess = new Process();
+            myprocess.StartInfo = start_info;
+            myprocess.Start();
+        }
         
     }
 
@@ -120,6 +134,11 @@ namespace Yeka.WPanel.AppServer
             {
                 registeredApp.Add(proc);
             }
+        }
+
+        public override void start()
+        {
+            run("php-cgi.exe", "", app_dir);
         }
     }
 

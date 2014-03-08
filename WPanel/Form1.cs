@@ -53,24 +53,27 @@ namespace WindowsFormsApplication1
             string dir = "";
             string path = "";
             pm = new ProcessManager();
-
+            
             path = Application.StartupPath + Path.DirectorySeparatorChar + "apache.ini";
-            dir = File.Exists(path) ? fileGetContents(path) : "";
+            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
             if (dir != "") { MessageBox.Show(dir);  }
             pm.registerApp(new Apache(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "nginx.ini";
-            dir = File.Exists(path) ? fileGetContents(path) : "";
+            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
             if (dir != "") { MessageBox.Show(dir); }
             pm.registerApp(new Nginx(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "php.ini";
-            dir = File.Exists(path) ? fileGetContents(path) : "";
-            if (dir != "") { MessageBox.Show(dir); }
+            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
+            if (dir != "")
+            {
+                btnPHPStart.Enabled = true;
+            }
             pm.registerApp(new PHP(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "mysql.ini";
-            dir = File.Exists(path) ? fileGetContents(path) : "";
+            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
             if (dir != "") { MessageBox.Show(dir); }
             pm.registerApp(new MySQL(dir, ""));
 
@@ -366,6 +369,11 @@ namespace WindowsFormsApplication1
         private void btnMySQLStop_Click(object sender, EventArgs e)
         {
             pm.get("MySQL").kill();
+        }
+
+        private void btnPHPStart_Click(object sender, EventArgs e)
+        {
+            pm.get("PHP").start();
         }
     }
 }

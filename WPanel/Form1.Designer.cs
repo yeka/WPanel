@@ -262,6 +262,7 @@
             this.btnPHPStart.TabIndex = 20;
             this.btnPHPStart.Text = "Start";
             this.btnPHPStart.UseVisualStyleBackColor = true;
+            this.btnPHPStart.Click += new System.EventHandler(this.btnPHPStart_Click);
             // 
             // btnMySQLStart
             // 
