@@ -10,6 +10,7 @@ using System.IO;
 using Yeka.WPanel;
 using Yeka.WPanel.AppServer;
 using System.Management;
+using System.Configuration;
 
 namespace WindowsFormsApplication1
 {
@@ -52,26 +53,21 @@ namespace WindowsFormsApplication1
         private void processManagerBootUp()
         {
             string dir = "";
-            string path = "";
             pm = new ProcessManager();
             
-            path = Application.StartupPath + Path.DirectorySeparatorChar + "apache.ini";
-            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
+            dir = Properties.Settings.Default.apache.Trim();
             btnApacheStart.Enabled = dir != "";
             pm.registerApp(new Apache(dir, ""));
 
-            path = Application.StartupPath + Path.DirectorySeparatorChar + "nginx.ini";
-            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
+            dir = Properties.Settings.Default.nginx.Trim();
             btnNginxStart.Enabled = dir != "";
             pm.registerApp(new Nginx(dir, ""));
 
-            path = Application.StartupPath + Path.DirectorySeparatorChar + "php.ini";
-            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
+            dir = Properties.Settings.Default.php.Trim();
             btnPHPStart.Enabled = dir != "";
             pm.registerApp(new PHP(dir, ""));
 
-            path = Application.StartupPath + Path.DirectorySeparatorChar + "mysql.ini";
-            dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
+            dir = Properties.Settings.Default.mysql.Trim();
             btnMySQLStart.Enabled = dir != "";
             pm.registerApp(new MySQL(dir, ""));
 
