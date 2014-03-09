@@ -15,6 +15,7 @@ namespace WindowsFormsApplication1
 {
     public partial class Form1 : Form
     {
+
         protected AppRunner runner;
         protected SimpleConfig config;
         protected ProcessManager pm;
@@ -57,13 +58,11 @@ namespace WindowsFormsApplication1
             path = Application.StartupPath + Path.DirectorySeparatorChar + "apache.ini";
             dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
             btnApacheStart.Enabled = dir != "";
-            if (dir != "") { MessageBox.Show(dir); }
             pm.registerApp(new Apache(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "nginx.ini";
             dir = File.Exists(path) ? fileGetContents(path).Trim() : "";
             btnNginxStart.Enabled = dir != "";
-            if (dir != "") { MessageBox.Show(dir); }
             pm.registerApp(new Nginx(dir, ""));
 
             path = Application.StartupPath + Path.DirectorySeparatorChar + "php.ini";
@@ -373,6 +372,21 @@ namespace WindowsFormsApplication1
         private void btnPHPStart_Click(object sender, EventArgs e)
         {
             pm.get("PHP").start();
+        }
+
+        private void btnNginxStart_Click(object sender, EventArgs e)
+        {
+            pm.get("Nginx").start();
+        }
+
+        private void btnApacheStart_Click(object sender, EventArgs e)
+        {
+            pm.get("Apache").start();
+        }
+
+        private void btnMySQLStart_Click(object sender, EventArgs e)
+        {
+            pm.get("MySQL").start();
         }
     }
 }

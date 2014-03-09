@@ -273,6 +273,7 @@
             this.btnMySQLStart.TabIndex = 19;
             this.btnMySQLStart.Text = "Start";
             this.btnMySQLStart.UseVisualStyleBackColor = true;
+            this.btnMySQLStart.Click += new System.EventHandler(this.btnMySQLStart_Click);
             // 
             // btnNginxStart
             // 
@@ -283,6 +284,7 @@
             this.btnNginxStart.TabIndex = 18;
             this.btnNginxStart.Text = "Start";
             this.btnNginxStart.UseVisualStyleBackColor = true;
+            this.btnNginxStart.Click += new System.EventHandler(this.btnNginxStart_Click);
             // 
             // btnApacheStart
             // 
@@ -293,6 +295,7 @@
             this.btnApacheStart.TabIndex = 17;
             this.btnApacheStart.Text = "Start";
             this.btnApacheStart.UseVisualStyleBackColor = true;
+            this.btnApacheStart.Click += new System.EventHandler(this.btnApacheStart_Click);
             // 
             // Form1
             // 

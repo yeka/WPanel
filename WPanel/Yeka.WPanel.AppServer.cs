@@ -83,7 +83,7 @@ namespace Yeka.WPanel.AppServer
         {
             ProcessStartInfo start_info = new ProcessStartInfo();
             start_info.WorkingDirectory = working_dir;
-            start_info.FileName = command;
+            start_info.FileName = working_dir + command;
             start_info.Arguments = arguments;
             start_info.UseShellExecute = false;
             start_info.CreateNoWindow = true;
@@ -167,6 +167,11 @@ namespace Yeka.WPanel.AppServer
             }
 
         }
+
+        public override void start()
+        {
+            run(@"bin\mysqld.exe", "", app_dir);
+        }
     }
 
     public class Apache : BaseAppServer
@@ -188,7 +193,10 @@ namespace Yeka.WPanel.AppServer
                 registeredApp.Add(proc);
             }
         }
+
+        public override void start()
+        {
+            run(@"bin\httpd.exe", "", app_dir);
+        }
     }
-
-
 }
