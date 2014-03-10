@@ -384,5 +384,19 @@ namespace WindowsFormsApplication1
         {
             pm.get("MySQL").start();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            // Show form based notification
+            // FormNotify a = new FormNotify(2000);
+            // a.Show();
+             
+            // Search files in folders
+            string[] files = Directory.GetFiles(@"X:\WS\Server\", "*.ini", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                txt_debug.AppendText(file + Environment.NewLine);
+            }
+        }
     }
 }

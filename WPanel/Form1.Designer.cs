@@ -53,6 +53,7 @@
             this.btnMySQLStart = new System.Windows.Forms.Button();
             this.btnNginxStart = new System.Windows.Forms.Button();
             this.btnApacheStart = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.watcher)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -297,11 +298,22 @@
             this.btnApacheStart.UseVisualStyleBackColor = true;
             this.btnApacheStart.Click += new System.EventHandler(this.btnApacheStart_Click);
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(313, 83);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(75, 23);
+            this.button3.TabIndex = 21;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(468, 404);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.btnPHPStart);
             this.Controls.Add(this.btnMySQLStart);
             this.Controls.Add(this.btnNginxStart);
@@ -358,6 +370,7 @@
         private System.Windows.Forms.Button btnMySQLStart;
         private System.Windows.Forms.Button btnNginxStart;
         private System.Windows.Forms.Button btnApacheStart;
+        private System.Windows.Forms.Button button3;
     }
 }
 
