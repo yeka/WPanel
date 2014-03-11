@@ -56,19 +56,19 @@ namespace WindowsFormsApplication1
             pm = new ProcessManager();
             
             dir = Properties.Settings.Default.apache.Trim();
-            btnApacheStart.Enabled = dir != "";
+            btnApacheStart.Tag = dir != "";
             pm.registerApp(new Apache(dir, ""));
 
             dir = Properties.Settings.Default.nginx.Trim();
-            btnNginxStart.Enabled = dir != "";
+            btnNginxStart.Tag = dir != "";
             pm.registerApp(new Nginx(dir, ""));
 
             dir = Properties.Settings.Default.php.Trim();
-            btnPHPStart.Enabled = dir != "";
+            btnPHPStart.Tag = dir != "";
             pm.registerApp(new PHP(dir, ""));
 
             dir = Properties.Settings.Default.mysql.Trim();
-            btnMySQLStart.Enabled = dir != "";
+            btnMySQLStart.Tag = dir != "";
             pm.registerApp(new MySQL(dir, ""));
 
             pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
@@ -142,6 +142,7 @@ namespace WindowsFormsApplication1
                 string msg = ProcessStatus.Start.Equals(status) ? "Start: " : "End: ";
                 string value = msg + proc["Name"] + " @ " + proc["ExecutablePath"] + "\r\n";
                 txt_debug.AppendText(value);
+                txt_debug.Select(txt_debug.Text.Length, 0);
                 updateProcessInfo();
             });
         }
@@ -156,18 +157,22 @@ namespace WindowsFormsApplication1
                     case "Apache":
                         lbl_apache.ForeColor = app.count > 0 ? Color.Green : Color.Black;
                         btnApacheStop.Enabled = app.count > 0;
+                        btnApacheStart.Enabled = app.count == 0 && (bool)btnApacheStart.Tag;
                         break;
                     case "Nginx":
                         lbl_nginx.ForeColor = app.count > 0 ? Color.Green : Color.Black;
                         btnNginxStop.Enabled = app.count > 0;
+                        btnNginxStart.Enabled = app.count == 0 && (bool)btnNginxStart.Tag;
                         break;
                     case "MySQL":
                         lbl_mysql.ForeColor = app.count > 0 ? Color.Green : Color.Black;
                         btnMySQLStop.Enabled = app.count > 0;
+                        btnMySQLStart.Enabled = app.count == 0 && (bool)btnMySQLStart.Tag;
                         break;
                     case "PHP":
                         lbl_php.ForeColor = app.count > 0 ? Color.Green : Color.Black;
                         btnPHPStop.Enabled = app.count > 0;
+                        btnPHPStart.Enabled = app.count == 0 && (bool)btnPHPStart.Tag;
                         break;
                 }
             }
@@ -176,7 +181,8 @@ namespace WindowsFormsApplication1
         void config_fileChanged(object sender, EventArgs e)
         {
             txt_watcher.Text = DateTime.Now.ToString() + Environment.NewLine;
-            txt_watcher.Text += "Configuration's updated" + Environment.NewLine;
+            txt_watcher.AppendText("Configuration's updated" + Environment.NewLine);
+            txt_watcher.Select(txt_debug.Text.Length, 0);
             autoStartFileWatcher();
         }
 
@@ -240,12 +246,13 @@ namespace WindowsFormsApplication1
                 {
                     timer.Enabled = true;
                     txt_watcher.Text = DateTime.Now.ToString() + Environment.NewLine;
-                    txt_watcher.Text += "File " + path + " has been modified" + Environment.NewLine + Environment.NewLine;
+                    txt_watcher.AppendText("File " + path + " has been modified" + Environment.NewLine + Environment.NewLine);
                     for (int i = 0; i < match.Groups.Count; i++)
                     {
                         args = args.Replace("{" + i + "}", match.Groups[i].Value);
                     }
-                    txt_watcher.Text += "Running: " + cmd + " " + args + Environment.NewLine;
+                    txt_watcher.AppendText("Running: " + cmd + " " + args + Environment.NewLine);
+                    txt_watcher.Select(txt_debug.Text.Length, 0);
                     Application.DoEvents();
                     string result = runner.Run(cmd, args, workdir);
                     processResult(result);
@@ -260,7 +267,8 @@ namespace WindowsFormsApplication1
             string message;
             ToolTipIcon icon;
 
-            txt_watcher.Text += Environment.NewLine + Environment.NewLine + result;
+            txt_watcher.AppendText(Environment.NewLine + Environment.NewLine + result);
+            txt_watcher.Select(txt_debug.Text.Length, 0);
             if (result.IndexOf("OK") > 0)
             {
                 message = Regex.Match(result, "OK.*").Value;
@@ -288,31 +296,6 @@ namespace WindowsFormsApplication1
             }
 
             growlNotify(title, message, icon);
-        }
-
-        public void renderTemplateFile()
-        {
-            string file = @"V:\temp\abc.txt.template";
-            string outfile = @"V:\temp\abc.txt";
-            string current_dir = Path.GetDirectoryName(file) + Path.DirectorySeparatorChar;
-            string wpanel_dir = Application.StartupPath + Path.DirectorySeparatorChar;
-
-            StreamReader r = new StreamReader(file);
-            string s = r.ReadToEnd();
-            r.Close();
-
-            s = s.Replace(@"{{current_dir\}}", current_dir.Replace(Path.DirectorySeparatorChar + "", @"\"));
-            s = s.Replace(@"{{current_dir\\}}", current_dir.Replace(Path.DirectorySeparatorChar + "", @"\\"));
-            s = s.Replace("{{current_dir/}}", current_dir.Replace(Path.DirectorySeparatorChar + "", "/"));
-            s = s.Replace("{{current_dir}}", current_dir);
-            s = s.Replace(@"{{wpanel_dir\}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", @"\"));
-            s = s.Replace(@"{{wpanel_dir\\}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", @"\\"));
-            s = s.Replace("{{wpanel_dir/}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", "/"));
-            s = s.Replace("{{wpanel_dir}}", wpanel_dir);
-
-            StreamWriter w = new StreamWriter(outfile);
-            w.Write(s);
-            w.Close();
         }
 
         public string fileGetContents(string fileName)
@@ -367,22 +350,30 @@ namespace WindowsFormsApplication1
 
         private void btnPHPStart_Click(object sender, EventArgs e)
         {
-            pm.get("PHP").start();
+            PHP php = (PHP)pm.get("PHP");
+            php.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
+            php.start();
         }
 
         private void btnNginxStart_Click(object sender, EventArgs e)
         {
-            pm.get("Nginx").start();
+            Nginx nginx = (Nginx)pm.get("Nginx");
+            nginx.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
+            nginx.start();
         }
 
         private void btnApacheStart_Click(object sender, EventArgs e)
         {
-            pm.get("Apache").start();
+            Apache apache = (Apache)pm.get("Apache");
+            apache.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
+            apache.start();
         }
 
         private void btnMySQLStart_Click(object sender, EventArgs e)
         {
-            pm.get("MySQL").start();
+            MySQL mysql = (MySQL)pm.get("MySQL");
+            mysql.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
+            mysql.start();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -397,6 +388,7 @@ namespace WindowsFormsApplication1
             {
                 txt_debug.AppendText(file + Environment.NewLine);
             }
+            txt_debug.Select(txt_debug.Text.Length, 0);
         }
     }
 }

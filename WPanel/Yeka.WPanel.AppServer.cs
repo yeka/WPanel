@@ -19,6 +19,7 @@ namespace Yeka.WPanel.AppServer
         void restartHard();
         void stop(); // Soft Stop, fallback to kill if n/a
         void kill(); // Kill process
+        void renderConfig(string wpanel_dir);
 
         // Process collections
         void clearProcess();
@@ -42,7 +43,11 @@ namespace Yeka.WPanel.AppServer
 
         public void setAppDir(string dir)
         {
-            app_dir = dir;
+            app_dir = dir.Replace("/", Path.DirectorySeparatorChar.ToString());
+            if (app_dir.Length>0 && app_dir.Substring(app_dir.Length - 1, 1) != Path.DirectorySeparatorChar.ToString())
+            {
+                app_dir += Path.DirectorySeparatorChar.ToString();
+            }
         }
 
         public void setProcessNamePattern(string name_pattern)
@@ -51,6 +56,15 @@ namespace Yeka.WPanel.AppServer
         }
 
         public void getProcess(string process_collections) {}
+
+        public virtual void renderConfig(string wpanel_dir)
+        {
+            string[] files = Directory.GetFiles(app_dir, "*.template", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                renderTemplateFile(file, wpanel_dir);
+            }
+        }
 
         public virtual void start() { }
         public void restart() { }
@@ -92,7 +106,41 @@ namespace Yeka.WPanel.AppServer
             myprocess.StartInfo = start_info;
             myprocess.Start();
         }
-        
+
+        protected void renderTemplateFile(string file, string wpanel_dir)
+        {
+            file = file.Replace("/", Path.DirectorySeparatorChar.ToString());
+            Match match = Regex.Match(file, @"(.*)\.template$");
+            if (!match.Success || !File.Exists(file)) {
+                return;
+            }
+            string outfile = match.Groups[1].Value;
+            string current_dir = Path.GetDirectoryName(file) + Path.DirectorySeparatorChar;
+
+            StreamReader r = new StreamReader(file);
+            string s = r.ReadToEnd();
+            r.Close();
+
+            s = s.Replace(@"{{current_dir\}}", current_dir.Replace(Path.DirectorySeparatorChar + "", @"\"));
+            s = s.Replace(@"{{current_dir\\}}", current_dir.Replace(Path.DirectorySeparatorChar + "", @"\\"));
+            s = s.Replace("{{current_dir/}}", current_dir.Replace(Path.DirectorySeparatorChar + "", "/"));
+            s = s.Replace("{{current_dir}}", current_dir);
+
+            s = s.Replace(@"{{app_dir\}}", app_dir.Replace(Path.DirectorySeparatorChar + "", @"\"));
+            s = s.Replace(@"{{app_dir\\}}", app_dir.Replace(Path.DirectorySeparatorChar + "", @"\\"));
+            s = s.Replace("{{app_dir/}}", app_dir.Replace(Path.DirectorySeparatorChar + "", "/"));
+            s = s.Replace("{{app_dir}}", app_dir);
+
+            s = s.Replace(@"{{wpanel_dir\}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", @"\"));
+            s = s.Replace(@"{{wpanel_dir\\}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", @"\\"));
+            s = s.Replace("{{wpanel_dir/}}", wpanel_dir.Replace(Path.DirectorySeparatorChar + "", "/"));
+            s = s.Replace("{{wpanel_dir}}", wpanel_dir);
+
+            StreamWriter w = new StreamWriter(outfile);
+            w.Write(s);
+            w.Close();
+        }
+
     }
 
     public class Nginx : BaseAppServer
@@ -143,7 +191,7 @@ namespace Yeka.WPanel.AppServer
 
         public override void start()
         {
-            run("php-cgi.exe", "-b 127.0.0.1:9001", app_dir);
+            run("php-cgi.exe", "-b 127.0.0.1:9541", app_dir);
         }
     }
 

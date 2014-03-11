@@ -170,7 +170,7 @@
             this.txt_debug.Multiline = true;
             this.txt_debug.Name = "txt_debug";
             this.txt_debug.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txt_debug.Size = new System.Drawing.Size(440, 215);
+            this.txt_debug.Size = new System.Drawing.Size(423, 238);
             this.txt_debug.TabIndex = 4;
             this.txt_debug.WordWrap = false;
             // 
