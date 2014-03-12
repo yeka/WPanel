@@ -26,7 +26,7 @@ namespace Yeka.WPanel.AppServer
         void addProcess(Process proc);
     }
 
-    public abstract class BaseAppServer: AppServerInterface 
+    public abstract class BaseAppServer: AppServerInterface
     {
         protected string app_dir;
         protected string proc_name_pattern;
@@ -67,9 +67,13 @@ namespace Yeka.WPanel.AppServer
         }
 
         public virtual void start() { }
-        public void restart() { }
-        public void restartHard() { }
-        public void stop() { }
+        public virtual void restart() { }
+        public virtual void stop() { }
+        public void restartHard()
+        {
+            kill();
+            start();
+        }
         public void kill()
         {
             for (int i = 0; i < registeredApp.Count; i++)
@@ -140,7 +144,79 @@ namespace Yeka.WPanel.AppServer
             w.Write(s);
             w.Close();
         }
+    }
 
+    public class GeneralAppServer : BaseAppServer
+    {
+        protected string app_name;
+        protected string process_name;
+        protected string start_command;
+        protected string restart_command;
+        protected string stop_command;
+
+        public GeneralAppServer(string name, string proc_name, string dir, string start_cmd, string restart_cmd, string stop_cmd, string proc_name_pattern)
+        : base(dir, proc_name_pattern)
+        {
+            app_name = name;
+            process_name = proc_name;
+            start_command = start_cmd;
+            restart_command = restart_cmd;
+            stop_command = stop_cmd;
+        }
+
+        public override string name
+        {
+            get
+            {
+                return app_name;
+            }
+        }
+
+        public override void addProcess(Process proc)
+        {
+            if (Regex.Match(proc.ProcessName, proc_name_pattern).Success)
+            {
+                registeredApp.Add(proc);
+            }
+        }
+
+        public override void start()
+        {
+            if (start_command == "")
+            {
+                return;
+            }
+            string[] cmd = splitCommand(start_command);
+            run(cmd[0], cmd[1], app_dir);
+        }
+
+        public override void restart()
+        {
+            if (restart_command == "")
+            {
+                restartHard();
+                return;
+            }
+            string[] cmd = splitCommand(start_command);
+            run(cmd[0], cmd[1], app_dir);
+        }
+
+        public override void stop()
+        {
+            if (stop_command == "")
+            {
+                kill();
+                return;
+            }
+            string[] cmd = splitCommand(stop_command);
+            run(cmd[0], cmd[1], app_dir);
+        }
+
+        protected string[] splitCommand(string command)
+        {
+            string[] cmd = ["", ""];
+            return cmd;
+        }
     }
 
     public class Nginx : BaseAppServer
