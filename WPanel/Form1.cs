@@ -57,19 +57,19 @@ namespace WindowsFormsApplication1
             
             dir = Properties.Settings.Default.apache.Trim();
             btnApacheStart.Tag = dir != "";
-            pm.registerApp(new Apache(dir, ""));
+            pm.registerApp(new GeneralAppServer("Apache", "apache", dir, @"bin\httpd.exe", "", "", "apache.*|httpd.*"));
 
             dir = Properties.Settings.Default.nginx.Trim();
             btnNginxStart.Tag = dir != "";
-            pm.registerApp(new Nginx(dir, ""));
+            pm.registerApp(new GeneralAppServer("Nginx", "nginx", dir, "nginx.exe", "nginx.exe -s reload", "nginx.exe -s stop", "nginx.*"));
 
             dir = Properties.Settings.Default.php.Trim();
             btnPHPStart.Tag = dir != "";
-            pm.registerApp(new PHP(dir, ""));
+            pm.registerApp(new GeneralAppServer("PHP", "php", dir, "php-cgi.exe -b 127.0.0.1:9541", "", "", "php.*"));
 
             dir = Properties.Settings.Default.mysql.Trim();
             btnMySQLStart.Tag = dir != "";
-            pm.registerApp(new MySQL(dir, ""));
+            pm.registerApp(new GeneralAppServer("MySQL", "mysql", dir, @"bin\mysqld.exe", "", "", "mysql.*"));
 
             pm.onProcessUpdated += new ProcessManager.ProcessUpdateEventHandler(pm_onProcessUpdated);
             pm.start();
@@ -330,12 +330,12 @@ namespace WindowsFormsApplication1
 
         private void btnNginxStop_Click(object sender, EventArgs e)
         {
-            pm.get("Nginx").kill();
+            pm.get("Nginx").stop();
         }
 
         private void btnPHPStop_Click(object sender, EventArgs e)
         {
-            pm.get("PHP").kill();
+            pm.get("PHP").stop();
         }
 
         private void btnApacheStop_Click(object sender, EventArgs e)
@@ -350,28 +350,28 @@ namespace WindowsFormsApplication1
 
         private void btnPHPStart_Click(object sender, EventArgs e)
         {
-            PHP php = (PHP)pm.get("PHP");
+            GeneralAppServer php = (GeneralAppServer)pm.get("PHP");
             php.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
             php.start();
         }
 
         private void btnNginxStart_Click(object sender, EventArgs e)
         {
-            Nginx nginx = (Nginx)pm.get("Nginx");
+            GeneralAppServer nginx = (GeneralAppServer)pm.get("Nginx");
             nginx.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
             nginx.start();
         }
 
         private void btnApacheStart_Click(object sender, EventArgs e)
         {
-            Apache apache = (Apache)pm.get("Apache");
+            GeneralAppServer apache = (GeneralAppServer)pm.get("Apache");
             apache.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
             apache.start();
         }
 
         private void btnMySQLStart_Click(object sender, EventArgs e)
         {
-            MySQL mysql = (MySQL)pm.get("MySQL");
+            GeneralAppServer mysql = (GeneralAppServer)pm.get("MySQL");
             mysql.renderConfig(Application.StartupPath + Path.DirectorySeparatorChar);
             mysql.start();
         }
