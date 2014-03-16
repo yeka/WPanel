@@ -54,6 +54,8 @@
             this.btnNginxStart = new System.Windows.Forms.Button();
             this.btnApacheStart = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.userControl11 = new WindowsFormsApplication1.UserControl1();
+            this.userControl12 = new WindowsFormsApplication1.UserControl1();
             ((System.ComponentModel.ISupportInitialize)(this.watcher)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -64,9 +66,9 @@
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(210, 12);
+            this.textBox1.Location = new System.Drawing.Point(217, 12);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(246, 20);
+            this.textBox1.Size = new System.Drawing.Size(239, 20);
             this.textBox1.TabIndex = 0;
             // 
             // button1
@@ -300,7 +302,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(313, 83);
+            this.button3.Location = new System.Drawing.Point(217, 35);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 21;
@@ -308,11 +310,29 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // userControl11
+            // 
+            this.userControl11.Location = new System.Drawing.Point(217, 64);
+            this.userControl11.Name = "userControl11";
+            this.userControl11.Size = new System.Drawing.Size(199, 19);
+            this.userControl11.Started = false;
+            this.userControl11.TabIndex = 22;
+            // 
+            // userControl12
+            // 
+            this.userControl12.Location = new System.Drawing.Point(217, 89);
+            this.userControl12.Name = "userControl12";
+            this.userControl12.Size = new System.Drawing.Size(199, 19);
+            this.userControl12.Started = false;
+            this.userControl12.TabIndex = 23;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(468, 404);
+            this.Controls.Add(this.userControl12);
+            this.Controls.Add(this.userControl11);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.btnPHPStart);
             this.Controls.Add(this.btnMySQLStart);
@@ -371,6 +391,8 @@
         private System.Windows.Forms.Button btnNginxStart;
         private System.Windows.Forms.Button btnApacheStart;
         private System.Windows.Forms.Button button3;
+        private UserControl1 userControl11;
+        private UserControl1 userControl12;
     }
 }
 

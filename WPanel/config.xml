@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+	<application>
+		<item name="PHP" app_dir="" process_pattern="php.*" startCmd="" restartCmd="" stopCmd=""></item>
+	</application>
+	<watcher>
+		<project name="POC" base_dir="D:/works/git/sf2-poc/" enable="false">
+			<watch pattern="vendor/propertyguru/event/src/Guru/EventBundle/(?!Tests/)(.*)\.php">
+				<action>phpunit.bat -c tests vendor/propertyguru/event/src/Guru/EventBundle/Tests/{1}Test.php</action>
+			</watch>
+			<watch pattern="vendor/propertyguru/event/src/Guru/EventBundle/Tests/.*\.php">
+				<action>phpunit.bat -c tests {0}</action>
+			</watch>
+		</project>
+	</watcher>
+</configuration>
